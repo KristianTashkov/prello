@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %} Sign up{% endblock %}
+
+{% block content %}
+<div class="panel panel-info">
+ <div class="panel-heading">Sign Up</div>
+ <div class="panel-body">
+    <p>
+    Create an account, in order to start organazing your life or buisness.
+    </p>
+    </br>
+    <div class="row">
+      <div class="col-md-4">
+        <form method="post" action="/register">
+          <div class="form-group">
+            <label for="username">Nickname:</label>
+            <input type="text" class="form-control" id="username" name="username" />
+          </div>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="text" class="form-control" id="email" name="email" />
+          </div>
+          <div class="form-group">
+            <label for="password1">Password:</label>
+            <input type="password" class="form-control" id="password1" name="password1" />
+          </div>
+          <div class="form-group">
+            <label for="password2">Repeat Password:</label>
+            <input type="password" class="form-control" id="password2" name="password2" />
+          </div>
+          <input type="submit" class="btn btn-primary" value="Register" />
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
