@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from boards.models import Board, List, ListEntry
 
 # Create your views here.
 
@@ -50,4 +51,31 @@ def register_request(request):
     user.save()
     user = authenticate(username=username, password=password1)
     login(request, user)
+    create_default_boards(user)
+
     return redirect("boards")
+
+
+def create_default_boards(user):
+    board = Board(title="Welcome")
+    board.save()
+    board.admins.add(user)
+    board.members.add(user)
+
+    basic_list = List.objects.create(title="Basic", board=board)
+    advanced_list = List.objects.create(title="Advanced", board=board)
+
+    ListEntry.objects.create(title="Add new list items to this list",
+                             description="You can add new list items to any\
+                             list by pressing the \"Add new lists\" button",
+                             parent_list=basic_list)
+
+    ListEntry.objects.create(title="Add members to a list item",
+                             description="You can add members to a list item.\
+                                          Try it!",
+                             parent_list=basic_list)
+
+    ListEntry.objects.create(title="Create a new list",
+                             description="You can create new lists in this\
+                                          board. Try it!",
+                             parent_list=advanced_list)
