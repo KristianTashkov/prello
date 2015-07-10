@@ -4,6 +4,11 @@ body {
     background: #0079BF;
 }
 
+.username-text {
+    color: white;
+    margin-right: 10px;
+}
+
 .login-form {
     margin-right: 0px;
 }
