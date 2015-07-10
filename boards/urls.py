@@ -3,5 +3,7 @@ from django.contrib import admin
 from . import views
 
 urlpatterns = [
-    url(r'$', views.boards, name="boards"),
+    url(r'(?P<board_id>[0-9]+)/$', views.board, name="board"),
+    url(r'^new/$', views.new_board, name="new_board"),
+    url(r'^$', views.boards, name="boards"),
 ]

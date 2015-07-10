@@ -4,11 +4,21 @@ from django.conf import settings
 
 class Board(models.Model):
     title = models.CharField(max_length=50)
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name="created_boards")
     admins = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                     related_name='administrator_of')
     members = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                      related_name='boards')
     is_public = models.BooleanField(default=False)
+
+    def new(user, title):
+        board = Board(title=title, creator=user)
+        board.save()
+
+        board.admins.add(user)
+        board.members.add(user)
+        return board
 
 
 class List(models.Model):

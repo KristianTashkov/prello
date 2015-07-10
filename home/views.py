@@ -57,10 +57,7 @@ def register_request(request):
 
 
 def create_default_boards(user):
-    board = Board(title="Welcome")
-    board.save()
-    board.admins.add(user)
-    board.members.add(user)
+    board = Board.new(user, "Welcome")
 
     basic_list = List.objects.create(title="Basic", board=board)
     advanced_list = List.objects.create(title="Advanced", board=board)
