@@ -35,7 +35,7 @@
 </div>
 
 <div class="panel panel-primary">
- <div class="panel-heading">Other Boards</div>
+ <div class="panel-heading">Other People's Boards</div>
  <div class="panel-body">
  {% if not other_boards %}
     <div class="alert alert-warning text-center">Nobody has added you to their boards</div>
@@ -43,7 +43,7 @@
      {% for board in other_boards %}
      <a href="/boards/{{ board.id }}"/>
         <div class="board-button">
-            <div class="board-text">{{ board.title }}</div>
+            <div class="board-text">{{board.creator}}'s {{ board.title }}</div>
         </div>
      </a>
      {% endfor %}
