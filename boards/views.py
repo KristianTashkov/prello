@@ -13,12 +13,9 @@ def boards(request):
 
 def board(request, board_id):
     board = get_object_or_404(Board, id=board_id)
-    lists = [board_list.get_for_rendering()
-             for board_list in board.lists.all()]
 
     return render(request, 'boards/board.html',
-                  {"lists": lists,
-                   "board_id": board.id})
+                  {"board": board.get_for_rendering()})
 
 
 @login_required

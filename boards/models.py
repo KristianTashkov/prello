@@ -20,6 +20,13 @@ class Board(models.Model):
         board.members.add(user)
         return board
 
+    def get_for_rendering(self):
+        self.board_members = self.members.all()
+        self.board_admins = self.admins.all()
+        self.board_lists = [board_list.get_for_rendering()
+                            for board_list in self.lists.all()]
+        return self
+
 
 class List(models.Model):
     title = models.CharField(max_length=50)

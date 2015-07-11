@@ -10,7 +10,7 @@
 {% block content %}
 
 <ol id="board_lists">
-	{% for board_list in lists %}
+	{% for board_list in board.board_lists %}
 	<li class="list" draggable="true">
 		<div class="dropdown list_options">
 		  <a class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -43,7 +43,26 @@
 	</a>
 </ol>
 
-{% for board_list in lists %}
+<div class="board-nav-bar">
+	 <div class="board-name">{{ board.title }}</div>
+	 <p>
+	 	<div>Admins:</div>
+	 	<ul class="members-list">
+	 	{% for member in board.board_admins %}
+	 		<li>{{ member.username }}</li>
+	 	{% endfor %}
+	 	</ul>
+	 	<div>Members:</div>
+	 	<ul class="members-list">
+	 	{% for member in board.board_members %}
+	 		<li>{{ member.username }}</li>
+	 	{% endfor %}
+	 	</ul>
+	 </p>
+</div>
+	
+
+{% for board_list in board.board_lists %}
 <div class="modal fade" id="add_list_item_modal{{ board_list.id }}">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -100,7 +119,7 @@
     <div class="modal-content">
     <form method="post" action="{% url 'new_list' %}">
       {% csrf_token %}
-      <input type="hidden" id="board_id "name="board_id" value="{{ board_id }}" />
+      <input type="hidden" id="board_id "name="board_id" value="{{ board.id }}" />
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Add a list</h4>
