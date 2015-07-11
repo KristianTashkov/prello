@@ -21,6 +21,7 @@ def board(request, board_id):
 
     return render(request, 'boards/board.html',
                   {"board": board.get_for_rendering(),
+                   "other_boards": request.user.boards.all(),
                    "is_admin": request.user.is_admin(board)})
 
 
@@ -67,6 +68,22 @@ def delete_list(request):
 
 
 @login_required
+def move_list(request):
+    list_id = int(request.POST['list_id'])
+    target_board_id = int(request.POST['move_target_id'])
+
+    board_list = get_object_or_404(List, id=list_id)
+    get_object_or_404(board_list.board.members.all(), id=request.user.id)
+    other_board = get_object_or_404(Board, id=target_board_id)
+    get_object_or_404(other_board.members.all(), id=request.user.id)
+
+    board_list.board = other_board
+    board_list.save()
+
+    return redirect("board", other_board.id)
+
+
+@login_required
 def new_list_item(request):
     title = request.POST['list_item_title']
     description = request.POST['list_item_description']
@@ -91,6 +108,22 @@ def delete_list_item(request):
                       id=request.user.id)
 
     list_entry.delete()
+
+    return redirect("board", list_entry.parent_list.board.id)
+
+
+@login_required
+def move_list_item(request):
+    list_entry_id = int(request.POST['list_entry_id'])
+    target_list_id = int(request.POST['move_target_id'])
+
+    list_entry = get_object_or_404(ListEntry, id=list_entry_id)
+    get_object_or_404(list_entry.parent_list.board.members.all(),
+                      id=request.user.id)
+    other_list = get_object_or_404(List, id=target_list_id)
+
+    list_entry.parent_list = other_list
+    list_entry.save()
 
     return redirect("board", list_entry.parent_list.board.id)
 

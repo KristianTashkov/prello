@@ -24,6 +24,21 @@
 		      	<a href="#" onclick="$(this).closest('form').submit()">Delete list</a>
 	        </form>
 			</li>
+			<li>
+				<form style="display: inline-block;" method="post" action="{% url 'move_list' %}">
+			      	{% csrf_token %}
+			      	<input type="hidden" name="list_id" value="{{ board_list.id }}" />
+			      	<div class="form-group">
+				      	<label for="move_target_id">Move to:</label>
+				      	<select name="move_target_id" id="move_target_id">
+				      	{% for other_board in other_boards %}
+						  <option value="{{ other_board.id}}">{{ other_board.title }}</option>
+				      	{% endfor %}
+						</select>
+					</div>
+			      	<a href="#" onclick="$(this).closest('form').submit()">Move list</a>
+			 		</form>
+				</li>
 		  </ul>
 		</div>
 
@@ -43,6 +58,21 @@
 			      	<input type="hidden" name="list_entry_id" value={{ list_entry.id}} />
 			      	<a href="#" onclick="$(this).closest('form').submit()">Delete list entry</a>
 			 		</form>
+					</li>
+					<li>
+					<form style="display: inline-block;" method="post" action="{% url 'move_list_item' %}">
+				      	{% csrf_token %}
+				      	<input type="hidden" name="list_entry_id" value={{ list_entry.id}} />
+				      	<div class="form-group">
+					      	<label for="move_target_id">Move to:</label>
+					      	<select name="move_target_id" id="move_target_id">
+					      	{% for other_list in board.board_lists %}
+							  <option value="{{ other_list.id}}">{{ other_list.title }}</option>
+					      	{% endfor %}
+							</select>
+						</div>
+				      	<a href="#" onclick="$(this).closest('form').submit()">Move list entry</a>
+				 		</form>
 					</li>
 				  </ul>
 				</div>
