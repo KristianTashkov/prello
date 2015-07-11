@@ -44,6 +44,37 @@
 </ol>
 
 {% for board_list in lists %}
+<div class="modal fade" id="add_list_item_modal{{ board_list.id }}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Add a new list item</h4>
+      </div>
+      <form method="post" action="{% url 'new_list_item' %}">
+      {% csrf_token %}
+      <input type="hidden" id="list_id "name="list_id" value="{{ board_list.id }}" />
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+            <div class="form-group">
+              <label for="list_title">Title:</label>
+              <input type="text" class="form-control" id="list_item_title" name="list_item_title" placeholder="My new list item"/>
+            </div>
+            <div class="form-group">
+              <label for="list_title">Description:</label>
+              <textarea class="form-control" id="list_item_description" name="list_item_description" Placeholder="My description"></textarea>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn btn-primary" value="Add" />
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 {% for list_entry in board_list.list_entries %}
 	<div class="modal fade" id="view_list_item_modal{{ list_entry.id }}">
 	  <div class="modal-dialog">
@@ -87,38 +118,6 @@
     </div>
   </div>
 </div>
-
-{% for board_list in lists %}
-<div class="modal fade" id="add_list_item_modal{{ board_list.id }}">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Add a new list item</h4>
-      <form method="post" action="{% url 'new_list_item' %}">
-      {% csrf_token %}
-      <input type="hidden" id="list_id "name="list_id" value="{{ board_list.id }}" />
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body">
-            <div class="form-group">
-              <label for="list_title">Title:</label>
-              <input type="text" class="form-control" id="list_item_title" name="list_item_title" placeholder="My new list item"/>
-            </div>
-            <div class="form-group">
-              <label for="list_title">Description:</label>
-              <textarea class="form-control" id="list_item_description" name="list_item_description" Placeholder="My description"></textarea>
-            </div>
-      </div>
-      <div class="modal-footer">
-        <input type="submit" class="btn btn-primary" value="Add" />
-      </div>
-      </form>
-    </div>
-  </div>
-</div>
-{% endfor %}
 
 {% endblock %}
 
