@@ -25,6 +25,11 @@ class List(models.Model):
     title = models.CharField(max_length=50)
     board = models.ForeignKey(Board, related_name="lists")
 
+    def get_for_rendering(self):
+        self.list_entries = [entry.get_for_rendering() for entry in
+                             self.entries.all()]
+        return self
+
 
 class ListEntry(models.Model):
     title = models.CharField(max_length=50)
@@ -32,6 +37,10 @@ class ListEntry(models.Model):
     parent_list = models.ForeignKey(List, related_name="entries")
     members = models.ManyToManyField(settings.AUTH_USER_MODEL)
     due_date = models.DateField(blank=True, null=True)
+
+    def get_for_rendering(self):
+        self.members = self.members.all()
+        return self
 
 
 class Comment(models.Model):
