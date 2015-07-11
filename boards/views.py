@@ -27,9 +27,13 @@ def board(request, board_id):
 
 @login_required
 def new_board(request):
+    if request.method == 'POST':
+        print("SUCCESS!!!!")
+    else:
+        print("SUCCESS!!!!")
     title = request.POST['board_title']
     board = Board.new(request.user, title)
-    return redirect("boards", board.id)
+    return redirect("board", board.id)
 
 
 @login_required
