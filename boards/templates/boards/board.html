@@ -47,17 +47,57 @@
 	 <div class="board-name">{{ board.title }}</div>
 	 <p>
 	 	<div>Admins:</div>
-	 	<ul class="members-list">
+	 	<ul class="board-nav-bar-item">
 	 	{% for member in board.board_admins %}
-	 		<li>{{ member.username }}</li>
+	 		<li>
+	 		<div style="display: inline-block;">
+	 			{{ member.username }}
+ 			</div>
+
+	 		<form style="display: inline-block;" method="post" action="{% url 'remove_admin' %}">
+	      	{% csrf_token %}
+	      	<input type="hidden" name="user_id" value="{{ member.id }}" />
+	      	<input type="hidden" name="board_id" value="{{ board.id }}" />
+	 		<a href="#" onclick="$(this).closest('form').submit()"><i class="fa fa-times"></i></a>
+	 		</form>
+	 		</li>
 	 	{% endfor %}
 	 	</ul>
 	 	<div>Members:</div>
-	 	<ul class="members-list">
+	 	<ul class="board-nav-bar-item">
 	 	{% for member in board.board_members %}
-	 		<li>{{ member.username }}</li>
+	 		<li>
+ 			<div style="display: inline-block;">
+	 			{{ member.username }}
+ 			</div>
+ 			
+	 		<form style="display: inline-block;" method="post" action="{% url 'remove_member' %}">
+	      	{% csrf_token %}
+	      	<input type="hidden" name="user_id" value="{{ member.id }}" />
+	      	<input type="hidden" name="board_id" value="{{ board.id }}" />
+	 		<a href="#" onclick="$(this).closest('form').submit()"><i class="fa fa-times"></i></a>
+	 		</form>
+	 		</li>
 	 	{% endfor %}
 	 	</ul>
+	 	<form class="board-nav-bar-item" method="post" action="{% url 'add_member' %}">
+	      {% csrf_token %}
+	      <input type="hidden" id="board_id " name="board_id" value="{{ board.id }}" />
+	      <div class="form-group">
+	        <label for="list_title">Add member:</label>
+	        <input type="text" class="form-control" id="member_username" name="member_username" placeholder="George"/>
+	      </div>
+          <input type="submit" class="btn btn-primary" value="Add" />
+	    </form>
+	    <form class="board-nav-bar-item" method="post" action="{% url 'add_admin' %}">
+	      {% csrf_token %}
+	      <input type="hidden" id="board_id " name="board_id" value="{{ board.id }}" />
+	      <div class="form-group">
+	        <label for="list_title">Add Admin:</label>
+	        <input type="text" class="form-control" id="member_username" name="member_username" placeholder="George"/>
+	      </div>
+          <input type="submit" class="btn btn-primary" value="Add" />
+	    </form>
 	 </p>
 </div>
 	
