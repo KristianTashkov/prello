@@ -198,19 +198,41 @@
 	<div class="modal fade" id="view_list_item_modal{{ list_entry.id }}">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
-	    <form action="{% url 'change_entry' %}" method="post">
-			{% csrf_token %}
-			<input type="hidden" name="list_entry_id" value={{ list_entry.id}} />
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        <input type="text" name="list_entry_title" class="modal-title" value="{{ list_entry.title}}" />
 	      </div>
 	      <div class="modal-body">
+	      <form action="{% url 'change_entry' %}" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="list_entry_id" value={{ list_entry.id}} />
 	        <p><textarea rows="4" cols="50" name="list_entry_description">{{ list_entry.description}}</textarea></p>
+	        <div>
+	        	<button type="submit" class="btn btn-primary">Save changes</button>
+	        </div>
+	        </form>
+	        <div class="comments-section">
+	        <div>
+	        	Comments:
+	        </div>
+	        {% for comment in list_entry.user_comments %}
+		        <div>
+		        [{{ comment.timestamp }}] {{ comment.user.username }}: {{ comment.text }}
+		        </div>
+	        {% endfor %}
+	        <div class="post-comment-section">
+	        	Post comment:
+	        	<form action="{% url 'post_comment' %}" method="post">
+					{% csrf_token %}
+					<input type="hidden" name="list_entry_id" value={{ list_entry.id}} />
+			        <p><textarea rows="4" cols="50" name="comment"></textarea></p>
+			        <input class="btn btn-primary" type="submit" value="Post Comment" />
+			    </form>
+	        </div>
+	        </div>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        <button type="submit" class="btn btn-primary">Save changes</button>
 	      </div>
 	    </div>
 	  </div>

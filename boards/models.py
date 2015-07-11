@@ -47,10 +47,12 @@ class ListEntry(models.Model):
 
     def get_for_rendering(self):
         self.members = self.members.all()
+        self.user_comments = self.comments.all()
         return self
 
 
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="comments")
+    list_entry = models.ForeignKey(ListEntry, related_name="comments")
     text = models.TextField()
     timestamp = models.DateTimeField(auto_now=True)

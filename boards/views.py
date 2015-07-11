@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
-from boards.models import Board, List, ListEntry
+from boards.models import Board, List, ListEntry, Comment
 from django.http import Http404
 
 
@@ -140,6 +140,20 @@ def change_list_item(request):
     list_entry.title = title
     list_entry.description = description
     list_entry.save()
+
+    return redirect("board", list_entry.parent_list.board.id)
+
+
+@login_required
+def post_comment(request):
+    comment = request.POST['comment']
+    list_id = int(request.POST['list_entry_id'])
+
+    list_entry = get_object_or_404(ListEntry, id=list_id)
+    get_object_or_404(list_entry.parent_list.board.members.all(),
+                      id=request.user.id)
+    comment = Comment(user=request.user, list_entry=list_entry, text=comment)
+    comment.save()
 
     return redirect("board", list_entry.parent_list.board.id)
 

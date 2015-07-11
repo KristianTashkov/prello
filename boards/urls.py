@@ -14,6 +14,8 @@ urlpatterns = [
     url(r'^list_item/delete/$', views.delete_list_item,
         name="delete_list_item"),
     url(r'^list_item/change/$', views.change_list_item, name="change_entry"),
+    url(r'^list_item/post_comment/$', views.post_comment,
+        name="post_comment"),
     url(r'^member/new/$', views.new_member, name="add_member"),
     url(r'^member/admin/new/$', views.new_admin, name="add_admin"),
     url(r'^member/remove/$', views.remove_member, name="remove_member"),

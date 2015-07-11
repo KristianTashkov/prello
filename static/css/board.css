@@ -40,6 +40,15 @@ body .container {
     margin-top: 50px;
 }
 
+.comments-section {
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.post-comments-section {
+    margin-top: 20px;
+}
+
 .list
 {
     display: inline-block;
