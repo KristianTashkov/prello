@@ -51,6 +51,20 @@ def new_list_item(request):
 
 
 @login_required
+def change_list_item(request):
+    title = request.POST['list_entry_title']
+    description = request.POST['list_entry_description']
+    list_id = int(request.POST['list_entry_id'])
+
+    list_entry = get_object_or_404(ListEntry, id=list_id)
+    list_entry.title = title
+    list_entry.description = description
+    list_entry.save()
+
+    return redirect("board", list_entry.parent_list.board.id)
+
+
+@login_required
 def new_member(request):
     username = request.POST['member_username']
     board_id = int(request.POST['board_id'])

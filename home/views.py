@@ -63,16 +63,16 @@ def create_default_boards(user):
     advanced_list = List.objects.create(title="Advanced", board=board)
 
     ListEntry.objects.create(title="Add new list items to this list",
-                             description="You can add new list items to any\
-                             list by pressing the \"Add new lists\" button",
+                             description="""You can add new list items to any
+                             list by pressing the \"Add new lists\" button""",
                              parent_list=basic_list)
 
     ListEntry.objects.create(title="Add members to a list item",
-                             description="You can add members to a list item.\
-                                          Try it!",
+                             description="""You can add members to a list item.
+                                          Try it!""",
                              parent_list=basic_list)
 
     ListEntry.objects.create(title="Create a new list",
-                             description="You can create new lists in this\
-                                          board. Try it!",
+                             description="""You can create new lists in this
+                                          board. Try it!""",
                              parent_list=advanced_list)

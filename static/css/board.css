@@ -91,6 +91,9 @@ a.dropdown-toggle {
     line-height: 1.4em;
 
     box-shadow: 1px 1px #ddd;
+
+    white-space: normal;
+    word-break: break-all;
 }
 
 .list_items li:hover {
