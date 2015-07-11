@@ -17,10 +17,13 @@
 			<i class="fa fa-large fa-caret-down"></i>
 		  </a>
 		  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-			<li><a href="#">Action</a></li>
-			<li><a href="#">Another action</a></li>
-			<li><a href="#">Something else here</a></li>
-			<li><a href="#">Separated link</a></li>
+			<li>
+	        <form action="{% url 'delete_list' %}" method="post">
+	        	{% csrf_token %}
+		      	<input type="hidden" name="list_id" value="{{ board_list.id }}" />
+		      	<a href="#" onclick="$(this).closest('form').submit()">Delete list</a>
+	        </form>
+			</li>
 		  </ul>
 		</div>
 
@@ -29,6 +32,20 @@
 		<ol class="list_items">
 			{% for list_entry in board_list.list_entries %}
 				<li draggable="true" data-toggle="modal" data-target="#view_list_item_modal{{ list_entry.id }}">
+				<div class="dropdown list_options">
+				  <a class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					<i class="fa fa-large fa-caret-down"></i>
+				  </a>
+				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+					<li>
+					<form style="display: inline-block;" method="post" action="{% url 'delete_list_item' %}">
+			      	{% csrf_token %}
+			      	<input type="hidden" name="list_entry_id" value={{ list_entry.id}} />
+			      	<a href="#" onclick="$(this).closest('form').submit()">Delete list entry</a>
+			 		</form>
+					</li>
+				  </ul>
+				</div>
 					{{ list_entry.title }}
 				</li>
 			{% endfor %}
@@ -44,7 +61,7 @@
 </ol>
 
 <div class="board-nav-bar">
-	 <div class="board-name">{{ board.title }}</div>
+	 <div class="board-name">{{board.creator.username }}'s {{ board.title }}</div>
 	 <p>
 	 	<div>Admins:</div>
 	 	<ul class="board-nav-bar-item">
@@ -54,12 +71,14 @@
 	 			{{ member.username }}
  			</div>
 
+			{% if is_admin and member != board.creator %}
 	 		<form style="display: inline-block;" method="post" action="{% url 'remove_admin' %}">
 	      	{% csrf_token %}
 	      	<input type="hidden" name="user_id" value="{{ member.id }}" />
 	      	<input type="hidden" name="board_id" value="{{ board.id }}" />
 	 		<a href="#" onclick="$(this).closest('form').submit()"><i class="fa fa-times"></i></a>
 	 		</form>
+	 		{% endif %}
 	 		</li>
 	 	{% endfor %}
 	 	</ul>
@@ -71,15 +90,18 @@
 	 			{{ member.username }}
  			</div>
  			
+ 			{% if member != board.creator and is_admin or request.user == member and member != board.creator %}
 	 		<form style="display: inline-block;" method="post" action="{% url 'remove_member' %}">
 	      	{% csrf_token %}
 	      	<input type="hidden" name="user_id" value="{{ member.id }}" />
 	      	<input type="hidden" name="board_id" value="{{ board.id }}" />
 	 		<a href="#" onclick="$(this).closest('form').submit()"><i class="fa fa-times"></i></a>
 	 		</form>
+	 		{% endif %}
 	 		</li>
 	 	{% endfor %}
 	 	</ul>
+	 	{% if is_admin %}
 	 	<form class="board-nav-bar-item" method="post" action="{% url 'add_member' %}">
 	      {% csrf_token %}
 	      <input type="hidden" id="board_id " name="board_id" value="{{ board.id }}" />
@@ -98,6 +120,14 @@
 	      </div>
           <input type="submit" class="btn btn-primary" value="Add" />
 	    </form>
+	    {% endif %}
+	    {% if request.user == board.creator %}
+	    <form class="board-nav-bar-item delete-board-form" method="post" action="{% url 'delete_board' %}">
+	      {% csrf_token %}
+	      <input type="hidden" id="board_id " name="board_id" value="{{ board.id }}" />
+	      <input type="submit" class="btn btn-primary" value="Delete board" />
+        </form>
+        {% endif %}
 	 </p>
 </div>
 	
@@ -135,12 +165,12 @@
 </div>
 
 {% for list_entry in board_list.list_entries %}
-<form action="{% url 'change_entry' %}" method="post">
-	{% csrf_token %}
-	<input type="hidden" name="list_entry_id" value={{ list_entry.id}} />
 	<div class="modal fade" id="view_list_item_modal{{ list_entry.id }}">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
+	    <form action="{% url 'change_entry' %}" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="list_entry_id" value={{ list_entry.id}} />
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        <input type="text" name="list_entry_title" class="modal-title" value="{{ list_entry.title}}" />
@@ -155,7 +185,6 @@
 	    </div>
 	  </div>
 	</div>
-</form>
 {% endfor %}
 {% endfor %}
 <div class="modal fade" id="add_list_modal">

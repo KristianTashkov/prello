@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from boards.models import Board, List, ListEntry
+from django.http import Http404
 
 
 @login_required
@@ -12,18 +13,35 @@ def boards(request):
                    "other_boards": request.user.get_other_boards()})
 
 
+@login_required
 def board(request, board_id):
     board = get_object_or_404(Board, id=board_id)
+    if request.user not in board.members.all():
+        return redirect('boards')
 
     return render(request, 'boards/board.html',
-                  {"board": board.get_for_rendering()})
+                  {"board": board.get_for_rendering(),
+                   "is_admin": request.user.is_admin(board)})
 
 
 @login_required
 def new_board(request):
     title = request.POST['board_title']
     board = Board.new(request.user, title)
-    return redirect("/boards/" + str(board.id))
+    return redirect("boards", board.id)
+
+
+@login_required
+def delete_board(request):
+    board_id = int(request.POST['board_id'])
+    board = get_object_or_404(Board, id=board_id)
+
+    if board.creator != request.user:
+        raise Http404
+
+    board.delete()
+
+    return redirect("boards")
 
 
 @login_required
@@ -32,8 +50,20 @@ def new_list(request):
     board_id = int(request.POST['board_id'])
 
     board = get_object_or_404(Board, id=board_id)
+    get_object_or_404(board.members.all(), id=request.user.id)
     basic_list = List.objects.create(title=title, board=board)
     return redirect("board", board.id)
+
+
+@login_required
+def delete_list(request):
+    list_id = int(request.POST['list_id'])
+
+    board_list = get_object_or_404(List, id=list_id)
+    get_object_or_404(board_list.board.members.all(), id=request.user.id)
+    board_list.delete()
+
+    return redirect("board", board_list.board.id)
 
 
 @login_required
@@ -43,11 +73,26 @@ def new_list_item(request):
     list_id = int(request.POST['list_id'])
 
     board_list = get_object_or_404(List, id=list_id)
+    get_object_or_404(board_list.board.members.all(), id=request.user.id)
+
     ListEntry.objects.create(title=title,
                              description=description,
                              parent_list=board_list)
 
     return redirect("board", board_list.board.id)
+
+
+@login_required
+def delete_list_item(request):
+    list_entry_id = int(request.POST['list_entry_id'])
+
+    list_entry = get_object_or_404(ListEntry, id=list_entry_id)
+    get_object_or_404(list_entry.parent_list.board.members.all(),
+                      id=request.user.id)
+
+    list_entry.delete()
+
+    return redirect("board", list_entry.parent_list.board.id)
 
 
 @login_required
@@ -57,6 +102,8 @@ def change_list_item(request):
     list_id = int(request.POST['list_entry_id'])
 
     list_entry = get_object_or_404(ListEntry, id=list_id)
+    get_object_or_404(list_entry.parent_list.board.members.all(),
+                      id=request.user.id)
     list_entry.title = title
     list_entry.description = description
     list_entry.save()
@@ -70,6 +117,7 @@ def new_member(request):
     board_id = int(request.POST['board_id'])
 
     board = get_object_or_404(Board, id=board_id)
+    get_object_or_404(board.admins.all(), id=request.user.id)
     user = get_object_or_404(User, username=username)
 
     board.members.add(user)
@@ -84,6 +132,7 @@ def new_admin(request):
     board_id = int(request.POST['board_id'])
 
     board = get_object_or_404(Board, id=board_id)
+    get_object_or_404(board.admins.all(), id=request.user.id)
     user = get_object_or_404(User, username=username)
 
     board.members.add(user)
@@ -99,6 +148,7 @@ def remove_admin(request):
     board_id = int(request.POST['board_id'])
 
     board = get_object_or_404(Board, id=board_id)
+    get_object_or_404(board.admins.all(), id=request.user.id)
     user = get_object_or_404(User, id=user_id)
 
     board.admins.remove(user)
@@ -114,6 +164,8 @@ def remove_member(request):
 
     board = get_object_or_404(Board, id=board_id)
     user = get_object_or_404(User, id=user_id)
+    if user != request.user:
+        get_object_or_404(board.admins.all(), id=request.user.id)
 
     board.members.remove(user)
     board.admins.remove(user)

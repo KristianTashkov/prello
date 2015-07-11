@@ -27,13 +27,17 @@ body .container {
 }
 
 .board-name {
-    font-size: 30px;
+    font-size: 20px;
     font-weight: bold;
     margin-bottom: 20px
 }
 
 .board-nav-bar-item li {
     margin-left:30px;
+}
+
+.delete-board-form {
+    margin-top: 50px;
 }
 
 .list
